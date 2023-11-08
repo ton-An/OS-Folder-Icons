@@ -9,6 +9,8 @@ from icon_generator.generator import (apply_mask, get_category_names,
                                       load_os_images, save_image_variants)
 from icon_generator.utils import (get_filename, get_inf_file_path,
                                   get_subfolder, reset_folder)
+from icon_generator.progress_bar import printProgressBar
+
 # Load environment variables
 load_dotenv()
 
@@ -31,7 +33,7 @@ category_names = get_category_names()
 reset_folder(output_folder_path)
 
 # Loop over each base image path
-for base_image_path in base_images:
+for base_images_index, base_image_path in enumerate(base_images):
     # Get the folder name for the OS and the filename of the image
     os_folder = get_subfolder(base_image_path, "os_folders", 2)
     os_folder_filename = get_filename(base_image_path)
@@ -41,7 +43,9 @@ for base_image_path in base_images:
     os_folder_config = get_inf_file_path(base_image_path)
 
     # Loop over each mask image path
-    for mask_image_path in mask_images:
+    for mask_image_index, mask_image_path in enumerate(mask_images):
+        masking_progress = mask_image_index / len(mask_images)
+        printProgressBar(base_images_index + masking_progress, len(base_images) - 1)
         # Get the filename of the mask image and the name of the category it belongs to
         maskfilename = get_filename(mask_image_path)
         category_name = get_subfolder(mask_image_path, "masks", 1)
